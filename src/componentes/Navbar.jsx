@@ -10,7 +10,7 @@ const Navbar = () => {
             <li><a className='menu-link' href='/' style={{color: "#D4AF37" }}>Inicio</a></li>
             <li><a className='menu-link' href='/componentes/Contraseña/Registro' style={{color: "#D4AF37" }}>Sign Up</a></li>
             <li><a className='menu-link' href='/componentes/Contraseña/Login' style={{color: "#D4AF37" }}>Log In</a></li>
-            <li><a className='menu-link' href='#' style={{color: "#D4AF37" }}>Dashboard</a></li>
+            <li><a className='menu-link' href='/dashboard.html' style={{color: "#D4AF37" }}>Dashboard</a></li>
         </ul>
     </nav>
   )
