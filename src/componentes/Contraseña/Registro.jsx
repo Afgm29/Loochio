@@ -3,10 +3,13 @@ import '../index.css'
 import { faCheck, faInfoCircle, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from '../../Api/axios'
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../../../firebase.js";
 
 const USER_REGEX =/^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = '/Registro';
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Registro = () => {
     const userRef = useRef();
@@ -15,6 +18,10 @@ const Registro = () => {
     const [user, setUser]= useState('');
     const [nvalido,setNvalido] =useState(false);
     const [nseleccionado,setNseleccionado] =useState(false);
+
+    const [email, setEmail] = useState('');
+    const [evalido, setEValido] = useState(false);
+    const [eseleccionado,setEseleccionado] =useState(false);
 
     const [contraseña, setContraseña]= useState('');
     const [cvalido,setCvalido] =useState(false);
@@ -34,6 +41,10 @@ const Registro = () => {
         const resultado = USER_REGEX.test(user);
         setNvalido(resultado);
     }, [user])
+    useEffect(() => {
+        const resultado = EMAIL_REGEX.test(email);
+        setEValido(resultado);
+    }, [email]);
     useEffect(()=>{
         const resultado = PWD_REGEX.test(contraseña);
         setCvalido(resultado);
@@ -43,34 +54,38 @@ const Registro = () => {
 
     useEffect(()=>{
         setErrMsj('');
-    }, [user, contraseña, confirmar])
+    }, [user, email, contraseña, confirmar])
 
     const handleSubmit = async(e) =>{
         e.preventDefault();
         const v1 = USER_REGEX.test(user);
         const v2 = PWD_REGEX.test(contraseña);
-        if (!v1 || !v2){
+        const v3 = EMAIL_REGEX.test(email);
+        
+        if (!v1 || !v2 || !v3){
             setErrMsj("Entrada invalida")
             return;
         }
         try{
-            const response = await axios.post(REGISTER_URL, 
-                JSON.stringify({ user, pwd: contraseña}), {
-                    headers: {'Content-Type':'application/json'},
-                    withCredentials: true
-                }
+            const response = await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    contraseña
             );
-            console.log(response.data);
+            await setDoc(doc(db, "usuarios", response.user.uid), {
+                usuario: user, email: email, fechaRegistro: serverTimestamp() 
+            });
             setAceptar(true);
-        }catch(err){
-            if(!err?.response){
-                setErrMsj('Sin respuesta del servidor');
-            }else if (err.response?.status==409){
-                setErrMsj('Nombre de usuario previamente registrado');
-            }else{
-                setErrMsj('Error al registrar');
+        }catch (err) {
+            if (err.code === "auth/email-already-in-use") {
+                setErrMsj("Este correo ya está registrado");
+            } else if (err.code === "auth/weak-password") {
+                setErrMsj("La contraseña es demasiado débil");
+            } else if (err.code === "auth/invalid-email") {
+                setErrMsj("El correo electrónico no es válido");
+            } else {
+                setErrMsj("No se pudo completar el registro");
             }
-            errRef.current.focus();
         }
     }
   return (
@@ -114,7 +129,25 @@ const Registro = () => {
                         4 a 24 caracteres.<br />
                         debe iniciar con una letra.<br />
                     </p>
+                    <label htmlFor="email">
+                        Email:
+                        <span className={evalido ? "valid" : "hide"}>
+                            <FontAwesomeIcon icon={faCheck} />
+                        </span>
+                        <span className={evalido || !email ? "hide" : "invalid"}>
+                            <FontAwesomeIcon icon={faTimes} />
+                        </span>
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        onChange={(e)=>setEmail(e.target.value)}
+                        required
+                        aria-invalid={evalido? "false":"true"}
+                        onFocus={() => setEseleccionado(true)}
+                        onBlur={() => setEseleccionado(false)}
 
+                    />
                     
                     <label htmlFor="password">
                         contraseña:
@@ -168,7 +201,7 @@ const Registro = () => {
                         <FontAwesomeIcon icon={faInfoCircle} />
                         Debe coincidir con la contraseña introducida.<br />
                     </p>
-                    <button disabled={!nvalido || !cvalido || !mvalido ? true : false}>sign up </button>
+                    <button disabled={!nvalido || !evalido || !cvalido || !mvalido ? true : false}>sign up </button>
                 </form>
                 <p>
                     ¿Ya estas registra      do?<br />

@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from "./Authprovider";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../firebase.js";
 
 import axios from '../../Api/axios'
 const LOGIN_URL = '/auth';
@@ -25,32 +27,32 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await axios.post(LOGIN_URL,
-                JSON.stringify({ user, pwd }),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                }
+       try {
+            const response = await signInWithEmailAndPassword(
+                auth,
+                email,
+                pwd
             );
-            const roles = response.data.roles;
-                setAuth({ user, roles });
-                setUser('');
-                setPwd('');
-                setSuccess(true);
-            
+
+            setAuth({
+                user: response.user.email,
+                roles: []
+            });
+
+            setEmail("");
+            setPwd("");
+            setSuccess(true);
         } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No Server Response');
-            } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
-            } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+            if (err.code === "auth/invalid-credential") {
+                setErrMsg("Correo o contraseña incorrectos");
+            } else if (err.code === "auth/too-many-requests") { 
+                setErrMsg("Demasiados intentos. Intenta más tarde.");
             } else {
-                setErrMsg('Login Failed');
+                 setErrMsg("No se pudo iniciar sesión");
+                }
+
+                errRef.current?.focus();
             }
-            errRef.current.focus();
-        }
     }
 
     return (

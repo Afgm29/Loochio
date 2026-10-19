@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import './App.css'
 import './main.css'
-import Counter from './Counter'
-import Gps from './componentes/ThingSpeak/Gps'
 import Navbar from './componentes/Navbar'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Registro from './componentes/Contraseña/Registro'
 import Login from './componentes/Contraseña/Login'
+import Dashboard from './Dashboard'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -28,6 +27,7 @@ function App() {
                   />
           <Route path="/componentes/Contraseña/Registro" element={<Registro/>}/>
           <Route path="/componentes/Contraseña/Login" element={<Login/>}/>
+          <Route path="/Dashboard" element={<Dashboard/>}/>
         </Routes>
       </BrowserRouter>
       
