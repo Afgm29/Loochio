@@ -57,7 +57,7 @@ const Login = () => {
         <>
             {success ? (
                 <section>
-                    <h1>You are logged in!</h1>
+                    <h1>Sesión iniciada!</h1>
                     <br />
                     <p>
                         <a href="../../Dashboard">Ir al dashboard</a>
