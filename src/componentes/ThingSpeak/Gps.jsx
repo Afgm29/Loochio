@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faCheck,faXmark} from "@fortawesome/free-solid-svg-icons";
 
 const Gps= function() {
-    const [Datos, setDatos] = useState();
+    const [Datos, setDatos] = useState({});
     const [Mapas, setMapas] = useState("https://maps.google.com/maps?q=${},${}&z=16&output=embed");
     const [boton, setBoton] = useState(true);
+    const [conexion, setConexion] = useState(false);
+    const [cargando, setCargando] = useState(true);
     useEffect(()=>{
         fetch("https://api.thingspeak.com/channels/3538878/feeds.json?api_key=6WHGRZZR5CFM99AW&results=2")
         .then((resp) => resp.json())
@@ -15,8 +19,9 @@ const Gps= function() {
             }
             const latitud = feed.field3;
             const longitud = feed.field4;
-            setDatos({ latitud, longitud });
-            setMapas("https://maps.google.com/maps?q="+latitud+","+longitud+"&z=16&output=embed");
+            const estadoGPS = feed.field5;
+            setDatos({ latitud, longitud, estadoGPS });
+            setMapas("https://maps.google.com/maps?q="+Datos.latitud+","+Datos.longitud+"&z=16&output=embed");
             
         })
     }, [boton])

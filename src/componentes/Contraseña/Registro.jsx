@@ -61,7 +61,6 @@ const Registro = () => {
         const v1 = USER_REGEX.test(user);
         const v2 = PWD_REGEX.test(contraseña);
         const v3 = EMAIL_REGEX.test(email);
-        
         if (!v1 || !v2 || !v3){
             setErrMsj("Entrada invalida")
             return;

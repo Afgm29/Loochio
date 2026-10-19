@@ -31,7 +31,7 @@
 
 .logo {
     text-decoration: none;
-    color: black;
+    color: rgb(106, 101, 9);
 }
 
 .menu {
@@ -49,64 +49,6 @@
 
 .menu-link:hover {
     text-decoration: underline;
-}
-
-.productos {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    padding-block: 2rem;
-}
-
-.producto {
-    display: flex;
-    flex-direction: column;
-    border-radius: 1rem;
-    overflow: hidden;
-}
-
-.producto > div {
-    padding: 1rem;
-    background-color: var(--clr-main-light);
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-}
-
-.producto > img {
-    width: 100%;
-    aspect-ratio: 2/1;
-    object-fit: cover;
-}
-
-.producto .ver-mas {
-    text-decoration: none;
-    background-color: var(--clr-main);
-    color: white;
-    padding: .5rem;
-    width: max-content;
-    border-radius: .5rem;
-    transition: .2s;
-}
-
-.producto .ver-mas:hover {
-    background-color: black;
-    color: white;
-}
-
-.producto-detalle {
-    padding-block: 2rem;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 2rem;
-}
-
-.producto-detalle img {
-    width: 100%;
-}
-
-.producto-detalle-info h3 {
-    font-size: 2rem;
 }
 
 .categoria {

@@ -15,14 +15,18 @@ function App() {
         <Navbar/>
         <Routes><Route path="/"
                   element={
+                    <header>
                     <div>
                       <h1>Bienvenido a Loochio</h1>
-                      <p>
-                        Loochio es un sistema de gafas inteligentes
-                        que ayuda a personas con discapacidad visual
-                        a identificar objetos y obstáculos del entorno.
-                      </p>
+                       <div>
+                        <div>
+                            <h1>Asiste tu sentido de la vista </h1>
+                            <p> L'oochio son unas gafas que analizan tus alrededores
+                                para describirlo con ayuda de IA </p>
+                        </div>
                     </div>
+                    </div>
+                    </header>
                     }
                   />
           <Route path="/componentes/Contraseña/Registro" element={<Registro/>}/>
