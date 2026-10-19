@@ -3,8 +3,6 @@ import AuthContext from "./Authprovider";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../firebase.js";
 
-import axios from '../../Api/axios'
-const LOGIN_URL = '/auth';
 
 const Login = () => {
     const { setAuth } = useContext(AuthContext);
@@ -62,7 +60,7 @@ const Login = () => {
                     <h1>You are logged in!</h1>
                     <br />
                     <p>
-                        <a href="#">Go to Home</a>
+                        <a href="../../Dashboard">Ir al dashboard</a>
                     </p>
                 </section>
             ) : (
