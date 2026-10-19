@@ -6,8 +6,6 @@ const Gps= function() {
     const [Datos, setDatos] = useState({});
     const [Mapas, setMapas] = useState("https://maps.google.com/maps?q=${},${}&z=16&output=embed");
     const [boton, setBoton] = useState(true);
-    const [conexion, setConexion] = useState(false);
-    const [cargando, setCargando] = useState(true);
     useEffect(()=>{
         fetch("https://api.thingspeak.com/channels/3538878/feeds.json?api_key=6WHGRZZR5CFM99AW&results=2")
         .then((resp) => resp.json())
@@ -21,20 +19,45 @@ const Gps= function() {
             const longitud = feed.field4;
             const estadoGPS = feed.field5;
             setDatos({ latitud, longitud, estadoGPS });
-            setMapas("https://maps.google.com/maps?q="+Datos.latitud+","+Datos.longitud+"&z=16&output=embed");
-            
         })
     }, [boton])
+    useEffect(() => {
+            if (Datos.latitud && Datos.longitud) {
+                setMapas("https://maps.google.com/maps?q="+Datos.latitud+","+Datos.longitud+"&z=16&output=embed");
+            }
+        }, [Datos.latitud, Datos.longitud]);
+
     const refrezcar = function(){
         setBoton(!boton);
     }
 return(
+    
     <div>
-        <h2>{Datos && Datos.latitud}</h2>
-        <h2>{Datos && Datos.longitud}</h2>
-        <h2>{Mapas}</h2>
-        <iframe src={Mapas} width="500" height="300"></iframe>
-        <button onClick={refrezcar}>Refrezcar</button>
+        <div
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "40px", padding: "40px", width: "90%", maxWidth: "1000px", margin: "0 auto"}}
+        >   
+            <div style={{ textAlign: "left",display: "flex", flexDirection: "column", alignItems: "center", gap: "20px",color: "black"}}>
+                <p>latitud: {Datos && Datos.latitud}</p>
+                <p>longitud: {Datos && Datos.longitud}</p><br />
+                <p>Estado del GPS: {Datos && Datos.estadoGPS === "1" ? (
+                    <span style={{ color: "green" }}>
+                        <FontAwesomeIcon icon={faCheck} /> Conectado
+                    </span>
+                ) : (
+                    <span style={{ color: "red" }}>
+                        <FontAwesomeIcon icon={faXmark} /> Desconectado
+                    </span>
+                )}</p>
+                <div style={{ alignItems: "center" }}>
+                    <button style={{ backgroundColor: "gold", color: "black" }} onClick={refrezcar}>
+                        Refrezcar
+                    </button>
+                </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", borderRadius: "10px", padding: "10px", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                <iframe src={Mapas} width="500" height="300"></iframe>
+            </div>
+        </div>
     </div>
 )
     
